@@ -1,0 +1,204 @@
+{% extends '_base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% if user.is_authenticated %}
+    {% block  playList %}
+        {% for playlist in playlists %}
+            <a href="/detailplaylist/{{playlist.id}}">
+                <li class="playlist">
+                    <div class="img">
+                        <img class="bg-white" src="https://icon-library.com/images/icon-music-note/icon-music-note-0.jpg">
+                    </div>
+                    <div class="describe">{{playlist.name}}</div>
+                </li>
+            </a>
+        {% endfor %}
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+    <style>
+        .detail-song-contain {
+            overflow-y: scroll;
+        }
+
+        #box-contain {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+            box-shadow: 2px 5px 5px #111111;
+            border-radius: 2rem;
+            margin: 2rem 5rem;
+        }
+
+        .detail-song-header {
+            justify-content: left;
+        }
+
+        .detail-song-img {
+            width: 250px;
+            height: 250px;
+        }
+
+        .detail-source-contain {
+            width: 58%;
+        }
+
+        .detail-artist-img, .detail-alb-img {
+            width: 200px;
+            height: 200px;
+        }
+
+        .detail-artist-desc .detail-artist-name, .detail-alb-desc .detail-alb-name {
+            font-size: 66px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .dt-art, .dt-alb {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+            box-shadow: 2px 5px 5px #111111;
+            border-radius: 2rem;
+        }
+
+        .dt-art:hover, .dt-alb:hover {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+        }
+
+        .detail-song-other {
+            margin: 2rem 5rem;
+        }
+
+        .detail-other-contain {
+            width: 38%;
+        }
+
+        #other-box {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+            border-radius: 2rem;
+            box-shadow: 2px 5px 5px #111111;
+        }
+
+        #other-box:hover {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+        }
+
+        #text-detail-header {
+            margin-bottom: 1rem;
+            font-weight: bolder;
+        }
+
+        .follow-icon {
+            font-size: 60px;
+            transition: 0.2s ease;
+            padding: 0 2rem;
+        }
+
+        .type-show {
+            justify-content: left;
+        }
+
+        .follow-way {
+            height: 70px;
+        }
+
+        .follow-way p:hover {
+            font-size: 80px;
+            cursor: pointer;
+        }
+
+        .footer-item {
+            display: inline-block;
+            margin: 0 1rem;
+            cursor: pointer;
+        }
+
+        .social-item {
+            font-size: 36px;
+            margin: 0 1rem;
+            cursor: pointer;
+        }
+
+        .copyright {
+            margin-top: 1rem;
+        }
+
+    </style>
+
+    <div class="detail-song-contain w-full h-full relative text-white font-thaiFont">
+        <div class="detail-song-header p-12 flex flex-nowrap items-center overflow-hidden" id="box-contain">
+            <!-- รูปเพลง -->
+             <img src="{{song.img}}" class="detail-song-img object-cover bg-white shrink-0" id="detail-img">
+                
+             <!-- ชื่อเพลง -->
+             <p class="detail-song-name text-7xl my-0 mx-12 whitespace-nowrap overflow-hidden text-ellipsis py-6">{{song.title}}</p>
+        </div>
+
+        <div class="detail-song-other flex justify-between items-center">
+            <div class="detail-other-contain relative flex flex-col items-center text-2xl overflow-hidden">
+                <div class="follow-channel w-full p-8 mx-0 my-4 relative hover:shadow-transparent cursor-pointer" id="other-box">
+                    <p class="follow-text" id="text-detail-header">ติดตาม</p>
+                    <div class="follow-way flex justify-center items-center relative">
+                        <a href="{{song.link}}"><p class="fa-brands fa-youtube follow-icon"></p></a>
+                        <a href="{{song.linkspotify}}"><p class="fa-brands fa-spotify follow-icon"></p></a>
+                        <a href="{{song.linkapple}}"><p class="fa-solid fa-music follow-icon"></p></a>
+                    </div>
+                </div>
+
+                <div class="detail-song-type w-full p-8 mx-0 my-4 relative hover:shadow-transparent cursor-pointer" id="other-box">
+                    <p class="song-type-text" id="text-detail-header">แนวเพลง</p>
+                    <div class="type-show flex items-center">
+                        <p class="show-text text-2xl py-0">{{song.typee}}</p>
+                    </div>
+                </div>
+
+                <div class="detail-song-history w-full p-8 mx-0 my-4 relative hover:shadow-transparent cursor-pointer" id="other-box">
+                    <p class="history-text" id="text-detail-header">วันปล่อยเพลง</p>
+                    <p class="release-date">{{song.release_date}}</p>
+                </div>
+            </div>
+
+            <div class="detail-source-contain flex flex-col gap-8">
+                <a href="/art/{{song.author.id}}">
+                    <div class="dt-art flex items-center w-full p-8 shrink-0 hover:cursor-pointer shadow-transparent">
+                        <img class="detail-artist-img bg-white shrink-0" id="detail-img" src="{{song.author.img}}">
+                        <div class="detail-artist-desc ml-12 whitespace-nowrap overflow-hidden text-ellipsis">
+                            <p class="detail-artist-name">{{song.author.name}}</p>
+                            <p class="detail-artist-type text-4xl">Artist</p>
+                        </div>
+                    </div>
+                </a>
+                {% if song.album != None %}
+                <a href="/songInAlbum/{{song.album.id}}">
+                    <div class="dt-art flex items-center w-full p-8 shrink-0 hover:cursor-pointer shadow-transparent">
+                        <img class="detail-artist-img bg-white shrink-0" id="detail-img" src="{{song.album.cover_image}}">
+                        <div class="detail-artist-desc ml-12 whitespace-nowrap overflow-hidden text-ellipsis">
+                            <p class="detail-artist-name">{{song.album.title}}</p>
+                            <p class="detail-artist-type text-4xl">{{song.album.genre}}</p>
+                        </div>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="footer mt-8">
+            <div class="footer-contain text-center text-white">
+                <p class="footer-logo text-4xl font-bold">69Music</p>
+                <div class="footer-choices">
+                    <p class="footer-item" id="home">Home</p>
+                    <p class="footer-item" id="about">About</p>
+                    <p class="footer-item" id="services">Services</p>
+                    <p class="footer-item" id="blog">Blog</p>
+                    <p class="footer-item" id="contact">Contact</p>
+                </div>
+                <div class="footer-social">
+                    <p class="social-item fa-brands fa-facebook" id="facebook"></p>
+                    <p class="social-item fa-brands fa-x-twitter" id="X"></p>
+                    <p class="social-item fa-brands fa-instagram" id="instagram"></p>
+                </div>
+                <p class="copyright">&#169; 2024 69Music</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

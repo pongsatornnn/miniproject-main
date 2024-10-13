@@ -1,0 +1,217 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    Artist 1 | 69music
+{% endblock %}
+
+{% if user.is_authenticated %}
+{% block  playList %}
+{% for playlist in playlists %}
+<a href="/detailplaylist/{{playlist.id}}">
+    <li class="playlist">
+        <div class="img">
+            <img class="bg-white" src="https://icon-library.com/images/icon-music-note/icon-music-note-0.jpg">
+        </div>
+        <div class="describe">{{playlist.name}}</div>
+    </li>
+</a>
+{% endfor %}
+{% endblock %}
+{% endif %}
+
+{% block content %}
+    <style>
+        .artistPage {
+            overflow-y: scroll;
+        }
+
+        .playName {
+            text-shadow: 5px 5px 5px #222;
+        }
+
+        .image-contain {
+            height: 40%;
+            background-color: white;
+            background-image: linear-gradient(#1c4587,#073763); 
+        }
+
+        .image-contain img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .top-song-contain {
+            max-width: 1500px;
+        }
+
+        .top-song-contain-1 img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .top-song-all-con {
+            transition: 0.2s;
+        }
+
+        .top-song-all-con:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .top-song-contain-1, .top-song-contain-2 {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
+
+        .top-song-contain-1 p {
+            margin-left: 2rem;
+        }
+
+        .top-song-contain-2 {
+            width: 20%;
+        }
+
+        .bio-box {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+        }
+
+        .artistPage::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .artistPage::-webkit-scrollbar-track {
+            background-color: #222;
+        }
+
+        .artistPage::-webkit-scrollbar-thumb {
+            background-color: #777;
+            border-radius: 3px;
+            visibility: hidden;
+        }
+
+        .artistPage::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+            border-radius: 3px;
+            visibility: visible;
+        }
+
+        .tempContain {
+            bottom: 5%;
+            left: 2%;
+            width: 95%;
+        }
+
+        .detailTools {
+            width: 360px;
+            /* background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.7)); */
+            transform: translate(-71%, -82%);
+        }
+
+        .tempHide {
+            opacity: 0;
+        }
+
+        .del-alb {
+            transition: 0.5s
+        }
+
+        .del-alb i:hover{
+            color: #fff;
+        }
+
+        .delHide {
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .delSong {
+            width: 160px;
+        }
+
+        .delSong:hover {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+        }
+
+
+    </style>
+
+    <div class="artistPage w-full h-full relative">
+        <div class="image-contain w-full relative flex justify-between items-center">
+            <div class="tempContain absolute flex justify-between items-center">
+                <p class="playName text-9xl text-white font-extrabold font-thaiFont">{{playlist.name}}</p>
+                <div class="del-alb text-7xl relative">
+                    <!-- /deleteplaylist/{{playlist.id}} -->
+                    <i class="gear fa-solid fa-gear delete-playlist-btn hover:cursor-pointer"></i>
+                    <div class="detailTools flex justify-between py-4 px-8 rounded-full absolute tempHide">
+                        
+                        <a href="/updatePlaylist/{{playlist.id}}"><i class="fa-solid fa-wrench hover:cursor-pointer"></i></a>
+                        <i class="trashDelete fa-solid fa-trash duration-500 hover:cursor-pointer"></i>
+                        <i class="gear2 fa-solid fa-gear hover:cursor-pointer"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="top-song-contain relative m-8 font-thaiFont">
+            <p class="top-song-text text-4xl text-white font-extrabold font-thaiFont pb-8">description</p>
+            <!-- description -->
+            <p class="bio-box border-2 border-white text-white font-thaiFont text-2xl p-8 leading-10 rounded-lg">{{playlist.description}}</p>
+            <div class="flex w-full justify-between items-center">
+                <p class="top-song-text text-4xl text-white font-extrabold font-thaiFont py-8">My song</p>
+                <p class="top-song-text text-2xl text-white font-extrabold font-thaiFont py-2 bg-red-500 rounded-xl cursor-pointer text-center delSong">Delete song</p>
+            </div>
+            <div class="top-song-table-contain py-4 flex w-full flex-col">
+                {% for song in playlistSong %}
+                    <a href="/songDetail/{{song.song.id}}" class="w-full text-lg text-white">
+                        <div class="top-song-all-con w-full flex justify-between p-4 rounded-lg">
+                            <div class="top-song-contain-1">
+                                <div class="song-img">
+                                    <img src="{{song.song.img}}">
+                                </div>
+                                <p class="song-name font-thaiFont text-2xl">{{song.song.title}}</p>
+                            </div>
+                            <div class="top-song-contain-2 text-white text-lg">
+                                <p class="song-time font-thaiFont text-2xl px-4">{{song.song.duration}}</p>
+                                <a href="/delete/{{song.song.id}}/{{playlist.id}}" class="font-thaiFont text-2xl float-left delSongCon p-2 bg-red-500 rounded-lg delHide"><h1>delete</h1></a>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        let gear = document.querySelector('.gear');
+        let gear2 = document.querySelector('.gear2');
+        let Tools = document.querySelector('.detailTools');
+        let delSong = document.querySelector('.delSong');
+        let delbtn = document.querySelector('.delSongCon');
+
+        gear.addEventListener('click', () => {
+            Tools.classList.toggle('tempHide')
+            gear.classList.toggle('tempHide')
+        })
+
+        gear2.addEventListener('click', () => {
+            Tools.classList.toggle('tempHide')
+            gear.classList.toggle('tempHide')
+        })
+
+        delSong.addEventListener('click', () => {
+            delbtn.classList.toggle('delHide')
+            if (delSong.innerText == 'Delete song') {
+                delSong.innerText = 'Cancel';
+            } else {
+                delSong.innerText = 'Delete song';
+            }
+        })
+
+    </script>
+    
+{% endblock %}

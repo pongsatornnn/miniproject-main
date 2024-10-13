@@ -1,0 +1,224 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    Artist 1 | 69music
+{% endblock %}
+
+{% if user.is_authenticated %}
+    {% block  playList %}
+        {% for playlist in playlists %}
+            <a href="/detailplaylist/{{playlist.id}}">
+                <li class="playlist">
+                    <div class="img">
+                        <img class="bg-white" src="https://icon-library.com/images/icon-music-note/icon-music-note-0.jpg">
+                    </div>
+                    <div class="describe">{{playlist.name}}</div>
+                </li>
+            </a>
+        {% endfor %}
+    {% endblock %}
+{% endif %}
+
+{% block content %}
+    <style>
+        .artistPage {
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+
+        .artistPage::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .artistPage::-webkit-scrollbar-track {
+            background-image: linear-gradient(#333, #222, #222, #222, #222, #222, #222);
+        }
+
+        .artistPage::-webkit-scrollbar-thumb {
+            background-color: #777;
+            border-radius: 3px;
+            visibility: hidden;
+        }
+
+        .artistPage::-webkit-scrollbar-corner {
+            display: none;
+        }
+
+        .artistPage::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+            border-radius: 3px;
+            visibility: visible;
+        }
+
+        .image-contain {
+            height: 40%;
+            background-color: #222;
+        }
+
+        .artist-name {
+            text-shadow: 5px 5px 5px #222;
+        }
+
+        .artist-name {
+            bottom: 5%;
+            left: 2%;
+        }
+
+        .top-song-contain {
+            max-width: 1500px;
+        }
+
+        .all-album {
+            width: 100%;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .all-album-list {
+            display: grid;
+            grid-template-columns: repeat(5, 310px);
+        }
+
+        .alb:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+        }
+
+        .alb:hover .play-button{
+            bottom: 30%;
+            opacity: 1;
+        }
+
+        .all-album-list::-webkit-scrollbar {
+            display: none
+        }
+
+        .alb-list {
+            list-style: none;
+        }
+
+        .alb-img {
+            height: 319px;
+        }
+
+        .alb-info .alb-name{
+            font-size: 21px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .play-button {
+            color: red;
+            background-color: #fff;
+            border-radius: 10rem;
+            font-size: 56px;
+            position: absolute;
+            right: 10%;
+            bottom: 10%;
+            transition: 0.1s;
+            opacity: 0;
+        }
+
+        .top-song-all-con {
+            transition: 0.2s;
+        }
+
+        .top-song-all-con:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .top-song-table-contain img {
+            width: 80px;
+            height: 80px;
+        }
+
+        .top-song-contain-1, .top-song-contain-2 {
+            display: flex;
+            justify-content: left;
+            align-items: center;
+        }
+
+        .top-song-contain-1 p {
+            margin-left: 2rem;
+        }
+
+        .top-song-contain-2 {
+            width: 15%;
+        }
+
+        .bio-box {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+        }
+
+    </style>
+
+    <div class="artistPage w-full h-full rounded-md">
+        <div class="image-contain w-full relative flex justify-center items-center">
+            <img src={{Arts.bg}} class="img-blur w-full h-full absolute object-cover top-0 left-0 ">
+            <p class="artist-name absolute text-9xl text-white font-extrabold font-thaiFont">{{Arts.name}}</p>
+        </div>
+        
+        <div class="top-song-contain relative m-8">
+            <p class="top-song-text text-4xl text-white font-extrabold font-thaiFont pb-8">ข้อมูลศิลปิน</p>
+            <p class="bio-box border-2 border-white text-white font-thaiFont text-2xl p-8 leading-10 rounded-lg">{{Arts.bio}}</p>
+            <p class="top-song-text text-4xl text-white font-extrabold font-thaiFont py-8">เพลงแนะนำ</p>
+            <div class="top-song-table-contain py-4 flex w-full flex-col">
+                {% for song in songs %}
+                    <a href="/songDetail/{{song.id}}" class="song-con w-full text-lg text-white">
+                        <div class="top-song-all-con w-full flex justify-between p-4 rounded-lg">
+                            <div class="top-song-contain-1">
+                                <div class="song-img">
+                                    <img src="{{song.img}}">
+                                </div>
+                                <p class="song-name font-thaiFont text-2xl">{{song.title}}</p>
+                            </div>
+                            <div class="top-song-contain-2 text-white text-lg">
+                                {% if user.is_authenticated %}
+                                    <p class="song-time font-thaiFont text-2xl">{{song.duration}}</p>
+                                    <a href="/playList/{{song.id}}" class="addTobtn text-4xl flex justify-center items-center p-4"><i class="fa-solid fa-plus font-thaiFont"></i></a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="all-album relative whitespace-nowrap m-8">
+            <p class="top-song-text text-4xl text-white font-extrabold font-thaiFont py-8">อัลบัม</p>
+            <div class="all-album-list">
+                {% for album in albums %}
+                    <div class='alb list-none relative block my-0 px-4 py-8'>
+                        <div class="alb-img bg-white w-full mb-4 overflow-hidden rounded-lg"><img src={{album.cover_image}} class="w-full h-full object-cover object-cover rounded-lg"></div>
+                        <div class="alb-info inline text-white">
+                            <p class="alb-name">{{album.title}}</p>
+                            <p class="alb-describe text-lg">{{album.release_date}} {{album.genre}}</p>
+                        </div>
+                        <a href="/songInAlbum/{{album.id}}">
+                            <i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i>
+                        </a>
+                    </div>
+                {% endfor %}    
+            </div>
+        </div>
+
+        <div class="footer font-thaiFont">
+            <div class="footer-contain">
+                <p class="footer-logo font-logoFont">69Music</p>
+                <div class="footer-choices">
+                    <p class="footer-item" id="home">Home</p>
+                    <p class="footer-item" id="about">About</p>
+                    <p class="footer-item" id="services">Services</p>
+                    <p class="footer-item" id="blog">Blog</p>
+                    <p class="footer-item" id="contact">Contact</p>
+                </div>
+                <div class="footer-social">
+                    <p class="social-item fa-brands fa-facebook" id="facebook"></p>
+                    <p class="social-item fa-brands fa-x-twitter" id="X"></p>
+                    <p class="social-item fa-brands fa-instagram" id="instagram"></p>
+                </div>
+                <p class="copyright">&#169; 2024 69Music</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

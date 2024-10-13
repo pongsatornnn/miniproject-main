@@ -1,0 +1,124 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}
+    69Music
+{% endblock %}
+
+{% if user.is_authenticated %}
+{% block  playList %}
+{% for playlist in playlists %}
+<a href="/detailplaylist/{{playlist.id}}">
+    <li class="playlist">
+        <div class="img">
+            <img class="bg-white" src="https://icon-library.com/images/icon-music-note/icon-music-note-0.jpg">
+        </div>
+        <div class="describe">{{playlist.name}}</div>
+    </li>
+</a>
+{% endfor %}
+{% endblock %}
+{% endif %}
+
+{% block content %}
+    <style>
+        .create-playlist-contain {
+            height: calc(100vh - var(--navbar-height));
+        }
+        
+        .create-box {
+            width: 40%;
+            max-width: 1000px;
+        }
+
+        .create-input {
+            width: 100%;
+            font-size: 21px;
+            padding: 0.5rem 1rem;
+            border-radius: 0.3rem;
+        }
+
+        @media screen and (min-width: 2000px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 20%;
+            }
+        }
+
+        @media screen and (min-width: 1800px) and (max-width: 1999px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 23%;
+            }
+        }
+
+        @media screen and (min-width: 1600px) and (max-width: 1799px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 26%;
+            }
+        }
+
+        @media screen and (min-width: 1400px) and (max-width: 1599px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 29%;
+            }
+        }
+
+        @media screen and (min-width: 1200px) and (max-width: 1399px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 35%;
+            }
+        }
+
+        @media screen and (min-width: 1000px) and (max-width: 1199px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 40%;
+            }
+        }
+
+        @media screen and (min-width: 800px) and (max-width: 999px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 46%;
+            }
+        }
+
+        @media screen and (min-width: 500px) and (max-width: 799px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 50%;
+            }
+        }
+
+        @media screen and (min-width: 200px) and (max-width: 499px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 80%;
+            }
+        }
+    </style>
+    <form method="POST" action="/addplaylistwithsong/{{song.id}}" class="create-playlist-contain flex justify-center items-center relative">
+    {% csrf_token %}
+        <div class="create-box text-center text-white p-12">
+            <h1 class="create-playlist-header text-6xl text-center my-8 font-thaiFont">Create Playlist</h1>
+            <div class="form-container">
+                <div class='create-playlist-label'>
+                    <div class="name-input m-4">
+                        <p class="name-label text-left my-3 mx-0 text-3xl font-thaiFont pb-3">Playlist Name</p>
+                        <input type="text" name="name" class="create-input text-black w-full text-xl py-2 px-4 rounded-md font-thaiFont" placeholder="Playlist name">
+                    </div>
+                    <div class="desc-input m-4">
+                        <p class="desc-label text-left my-3 mx-0 text-3xl font-thaiFont pb-3">Description</p>
+                        <input type="text" name="desc" class="create-input text-black font-thaiFont" placeholder="Description">
+                    </div>               
+                </div>
+            </div>
+            <button type="submit" class="confirm-create-btn mt-4 bg-green-500 rounded-lg text-xl py-2 px-4 font-bold hover:bg-green-600 font-thaiFont">Create Playlist</button>
+        </div>
+    </form>
+    
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends '_base.html' %}
+
+{% block title %}
+    Song In Album
+{% endblock %}
+
+{% if user.is_authenticated %}
+    {% block  playList %}
+        {% for playlist in playlists %}
+            <a href="/detailplaylist/{{playlist.id}}">
+                <li class="playlist">
+                    <div class="img">
+                        <img class="bg-white" src="https://icon-library.com/images/icon-music-note/icon-music-note-0.jpg">
+                    </div>
+                    <div class="describe">{{playlist.name}}</div>
+                </li>
+            </a>
+        {% endfor %}
+    {% endblock %}
+{% endif %}
+
+
+{% block content %}
+
+    <style>
+        :root {
+            --alb-banner-height: 180px;
+        }
+
+        .song-alb-page-contain {
+            overflow-y: scroll;
+        }
+
+        .alb-header-banner {
+            background-image: linear-gradient(#1c4587,#073763);
+            justify-content: left;
+        }
+
+        .alb-img-banner {
+            width: 180px;
+            height: 180px;
+        }
+
+        .alb-song-table td, .alb-song-table th {
+            padding: 1rem;
+        }
+
+        .song-name:hover, .song-artist:hover {
+            text-decoration: underline;
+        }
+
+        .alb-table-item {
+            transition: 0.2s;
+        }
+
+        .alb-table-item:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .song-alb-page-contain::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .song-alb-page-contain::-webkit-scrollbar-track {
+            background-color: #222;
+        }
+
+        .song-alb-page-contain::-webkit-scrollbar-thumb {
+            background-color: #777;
+            border-radius: 3px;
+            visibility: hidden;
+        }
+
+        .song-alb-page-contain::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+            border-radius: 3px;
+            visibility: visible;
+        }
+
+    </style>
+
+    <div class="song-alb-page-contain w-full h-full relative font-thaiFont">
+        <div class="alb-header-banner w-full relative flex items-center py-6">
+            <img src='{{album.cover_image}}' class="alb-img-banner bg-white m-4">
+            <div class="alb-banner-text flex  flex-col relative text-white py-0 px-2">
+                <p class="alb-text text-lg py-0 px-1.5">{{album.genre}}</p>
+                <p class="alb-name text-7xl font-bold py-3">{{album.title}}</p>
+                <div class="alb-desc flex">
+                    <p class="alb-artist text-xl py-0 px-1.5">{{album.author.name}}</p>
+                    <p class="alb-year-release text-xl py-0 px-1.5">{{album.release_date}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="alb-all-song text-white p-4 text-xl">
+            <table class="alb-song-table w-full">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th style="width:75%; text-align: left;">Title</th>
+                        <th>Time</th>
+                        {% if user.is_authenticated %}
+                        <th>Add to playlist</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for song in songs %}
+                        <tr class="alb-table-item">
+                            <td class="song-no text-center">{{ forloop.counter }}</td>
+                            <td class="song-name-contain bg-transparent">
+                                <a href="/songDetail/{{song.id}}" class="song-con"><p class="song-name">{{song.title}}</p></a>
+                                <a href="/art/{{song.author.id}}" class="song-con text-sm"><p class="song-artist">{{song.author.name}}</p></a>
+                            </td>
+                            <td class="song-duration text-center">{{song.duration}}</td>
+                            {% if user.is_authenticated %}
+                            <td class="song-duration text-center">
+                                <a href="/playList/{{song.id}}">
+                                    <p class="">Add</p>
+                                </a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>    
+            </table> 
+        </div>
+    </div>
+
+
+{% endblock %}

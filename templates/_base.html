@@ -1,0 +1,592 @@
+{% load compress %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Bebas+Neue&family=Noto+Sans+Thai:wght@100..900&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Protest+Strike&display=swap" rel="stylesheet">
+    {% compress css %}
+        <link rel="stylesheet" href="{% static 'src/output.css' %}">
+    {% endcompress %}
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+</head>
+<body class="bg-black">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            overflow: hidden;
+        }
+
+        .nav-contain {
+            height: var(--navbar-height);
+        }
+
+        .home-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .search {
+            border: none;
+        }
+
+        .search-bar {
+            width: 450px;
+            height: 40px;
+            text-align: left;
+        }
+
+        .search-bar input {
+            width: 89%;
+            background-color: transparent;
+        }
+
+        .user-login {
+            font-size: 18px;
+        }
+
+        .side-nav {
+            height: calc(100vh - var(--navbar-height));
+            width: var(--sidebar-width);
+            background-color: #222;
+        }
+
+        .content {
+            background-image: linear-gradient(#333, #222, #222, #222, #222, #222, #222);
+            height: calc(100vh - var(--navbar-height));
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        .lib {
+            width: 175px;
+        }
+
+        .playlist-search input {
+            width: 0;
+            opacity: 0;
+            transition: 0.3s;
+            padding: 0.5rem 0.3rem;
+        }
+
+        .playlist-search i {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .playlist-search i:hover {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
+        }
+
+        .playlist-sort {
+            width: 70px;
+        }
+
+        .playlist {
+            list-style: none;
+            display: flex;
+            justify-content: left;
+            align-items: center;
+            width: 100%;
+            font-size: 21px;
+            font-weight: bold;
+            padding: 1rem 0;
+            color: #fff;
+            transition: 0.3s;
+        }
+
+        .playlist:hover {
+            background-image: linear-gradient(90deg,#333, #444);
+            border-radius: 0.5rem;
+            padding-left: 1rem;
+            cursor: pointer;
+        }
+
+        .playlist:active {
+            background-image: linear-gradient(90deg,#222, #333);
+            border-radius: 0.5rem;
+            padding-left: 1rem;
+            cursor: pointer;
+        }
+
+        .playlist img {
+            width: 60px;
+            height: 60px;
+            border-radius: 0.3rem;
+            margin-right: 1rem;
+        }
+
+        .all-playlist-contain {
+            overflow-y: scroll;
+            height: 90%;
+        }
+
+        .all-playlist-contain::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .all-playlist-contain::-webkit-scrollbar-track {
+            background-color: #222;
+        }
+
+        .all-playlist-contain::-webkit-scrollbar-thumb {
+            background-color: #777;
+            border-radius: 3px;
+            visibility: hidden;
+        }
+
+        .all-playlist-contain::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+            border-radius: 3px;
+            visibility: visible;
+        }
+
+        .sort-contain {
+            width: 100px;
+            top: 130%;
+            opacity: 0;
+        }
+
+        .show-sort {
+            opacity: 1;
+        }
+
+        .sort-item {
+            padding: 0.5rem;
+        }
+
+        .sort-item:hover {
+            cursor: pointer;
+            background-color: #eee;
+            padding: 0.5rem;
+        }
+
+        .added-complete {
+            bottom: 10%;
+            left: 50%;
+            transition: opacity 0.4s ease, bottom 0.4s ease;
+            transform: translateX(-50%);
+            opacity: 1;
+        }
+
+        .hide-added {
+            opacity: 0;
+            bottom: 0;
+        }
+
+        .close-complete {
+            margin-left: 1rem;
+            font-size: 24px;
+        }
+
+        .close-complete:hover {
+            cursor: pointer;
+            color: #ddd
+        }
+
+        .close-complete:active {
+            scale: 0.8;
+        }
+
+        .delete-complete {
+            background-color: #fe0000;
+            border-radius: 1rem;
+            position: fixed;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 21px;
+            font-weight: bolder;
+            padding: 1rem 2rem;
+            color: #fff;
+            transition: opacity 0.5s ease, bottom 0.5s ease;
+        }
+
+        .hide-delete {
+            opacity: 0;
+            bottom: 0;
+        }
+
+        .close-delete {
+            margin-left: 1rem;
+            font-size: 24px;
+        }
+
+        .close-delete:hover {
+            cursor: pointer;
+            color: #ddd;
+        }
+
+        .close-delete:active {
+            transform: scale(0.8);
+        }
+
+        .footer-contain {
+            height: 380px;
+            width: 100%;
+            position: relative;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 36px;
+            font-weight: bolder;
+            margin: 1rem 0;
+        }
+
+        .footer-choices {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
+            width: 500px;
+            margin: 1rem 0;
+        }
+
+        .footer-social {
+            display: flex;
+            justify-content: space-between;
+            font-size: 36px;
+            width: 200px;
+            margin: 1rem 0;
+        }
+
+        .copyright {
+            font-size: 18px;
+            margin: 1rem 0;
+        }
+
+        .delconcon1 {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+        }
+
+        .deletecon1 {
+            width: 36%;
+            height: 30%;
+            top: 50%;
+            left: 50%;
+            background-color: #111;
+            transform: translate(-50%, -50%);
+        }
+
+        .deletecon1btn {
+            width: 80%;
+        }
+
+        .deleteConBTN {
+            width: 200px;
+        }
+
+        .deleteConBTN:hover {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+        }
+
+        .hideDel {
+            opacity: 0;
+            z-index: -1;
+        }
+
+        @media screen and (min-width: 2000px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 20%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 1800px) and (max-width: 1999px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 23%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 1600px) and (max-width: 1799px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 26%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 1400px) and (max-width: 1599px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 29%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 1200px) and (max-width: 1399px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 35%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 1000px) and (max-width: 1199px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 40%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 800px) and (max-width: 999px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 46%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 500px) and (max-width: 799px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 50%;
+                --footer-height: 35%;
+            }
+        }
+
+        @media screen and (min-width: 200px) and (max-width: 499px) {
+            :root {
+                --navbar-height: 70px;
+                --sidebar-width: 80%;
+                --footer-height: 35%;
+            }
+        }
+
+        #allplaylist::-webkit-scrollbar-corner {
+            display: none;
+        }
+
+    </style>
+    <!-- แถบ navbar ด้านบน -->
+    <nav class="bg-black">
+        <div class="nav-contain mx-8 my-0 flex items-center justify-between px-2 py-0">
+            <div class="logo text-3xl font-extrabold text-white font-logoFont">
+                <p>69Music</p>
+                <!-- <img src="" alt=""> -->
+            </div>
+            <div class="menu flex justify-center items-center ml-20">
+                <a href="/" class="home-icon flex rounded-full bg-neutral-700 justify-center items-center mx-4 my-0 text-white">
+                    <i class="fas fa-home"></i>
+                </a>
+                <form method="POST" action="/search">
+                {% csrf_token %}
+                <div class="search-bar flex justify-center items-center rounded-full relative bg-neutral-700">
+                    <i class="fa-solid fa-magnifying-glass text-white mx-3 my-0"></i>
+                    <input type="text" class="t-bar search outline-none text-white bg-transparent font-thaiFont" name='data' placeholder="What do you want to play?">
+                </div>
+                </form>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="user-login flex justify-center items-center">
+                <a href=""> 
+                    <p id="signUp" class="mr-6 text-white font-thaiFont">{{ user.username }}</p>
+                </a>
+                <a href="/logout">
+                    <p id="signIn" class="bg-white text-black rounded-full py-2 px-6 font-thaiFont">logout</p>
+                </a>
+            </div>
+            {% else %}
+            <div class="user-login flex justify-between items-center">
+                <a href="/signup"> 
+                    <p id="signUp" class="text-white px-5 font-thaiFont">sign up</p>
+                </a>
+                <a href="/login">
+                    <p id="signIn" class="text-black px-5 py-2 bg-white rounded-full hover:bg-gray-100 font-thaiFont">sign in</p>
+                </a>
+            </div>
+            {% endif %}
+            
+        </div>
+    </nav>
+
+    <!-- ส่วนตัวเว็บที่ไม่ใช่ navbar -->
+    <div class="main-content flex justify-between items-center relative">
+        <!-- แถบ navbar ด้านข้าง -->
+        <nav class="side-nav mr-2 px-6 py-6 rounded-md font-thaiFont">
+            <!-- หัวข้อ library -->
+            {% if user.is_authenticated %}
+                <div class="lib-bar flex justify-between items-center text-white mb-6 text-2xl">
+                    <div class="lib flex justify-between items-center">
+                        <i class="fa-solid fa-layer-group" id="lib-logo"></i>
+                        <p id="lib-item font-thaiFont">Your Playlist</p>
+                    </div>
+                    <a href="/createplaylist" class="create-playlist-btn">
+                        <button type="submit"><i class="fa-solid fa-plus"></i></button>
+                    </a>
+                </div>
+                
+                <div class="playlist-tools relative flex justify-between items-center mb-4">
+                    <div class="playlist-search flex justify-normal items-center relative">
+                        <i class="fa-solid fa-magnifying-glass playlist-search-icon text-white relative p-2 text-xl rounded-full hover:p-2 cursor-pointer"></i>
+                        <input type="text" class="lib-search playlist-search-input outline-none rounded-lg left-0 absolute text-lg">
+                    </div>
+                    <div class="playlist-sort flex justify-between items-center text-white text-lg">
+                        <p class="sort-type font-thaiFont">None</p>
+                        <i class="fa-solid fa-bars open-sort cursor-pointer text-2xl active:bg-neutral-400"></i>
+                    </div>
+                    <div class="sort-contain bg-white text-lg float-left absolute right-0">
+                        <p class="sort-label my-2 mx-0 py-0 px-2 font-thaiFont">Sort by</p><hr>
+                        <ul class="sort-list">
+                            <li class="sort-item font-thaiFont">Recents</li>
+                            <li class="sort-item font-thaiFont">A-Z</li>
+                            <li class="sort-item font-thaiFont">Z-A</li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <ul class="all-playlist-contain">
+                    {% block playList %}
+                    {% endblock %}
+                </ul>
+             
+             {% else %}
+                <div class="lib-bar flex justify-between items-center text-white mb-6 text-2xl leading-10">
+                    <div class="lib flex justify-between items-center">
+                        <p id="lib-item font-thaiFont">Sign-in for Add playlist</p>
+                    </div>
+                </div>
+             {% endif %}
+        </nav>
+
+    
+        <!-- เพลงต่างๆ -->
+        <div class="content rounded-l-lg relative">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+
+    <div class="delconcon1 absolute float-left w-screen h-screen top-0 left-0 font-thaiFont hideDel">
+        <div class="deletecon1 absolute flex justify-center items-center flex-col font-bold text-4xl rounded-2xl">
+            <p class="delconTitle1 text-white py-4">Are you sure to delete this Playlist</p>
+            <div class="deletecon1btn flex justify-around py-8">
+                <a href="/deleteplaylist/{{playlist.id}}"><p class="deleteConBTN bg-red-500 p-4 text-center rounded-2xl cursor-pointer">confirm</p></a>
+                <a href=""><p class="deleteConBTN bg-white p-4 text-center rounded-2xl cursor-pointer cancelDel">cancel</p></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sidenav = document.querySelector('.side-nav')
+        const AddText = document.querySelector('.added-complete');
+        const completeText = document.querySelector('.complete-text');
+        const closeAddText = document.querySelector('.close-complete');
+        const confirmCreatePlaylist = document.querySelector('.confirm-create-btn');
+        const OpenSort = document.querySelector('.open-sort');
+        const SortContain = document.querySelector('.sort-contain');
+        const PlaylistSearchBar = document.querySelector('.playlist-search-input');
+        const PlaylistSearchIcon = document.querySelector('.playlist-search-icon');
+        const PlaylistSearchContainer = document.querySelector('.playlist-search');
+        const delText = document.querySelector('.delete-complete');
+        const closeDeleteText = document.querySelector('.close-delete');
+        const trashDel = document.querySelector('.trashDelete');
+        const delPlaylist1 = document.querySelector('.delconcon1');
+
+        trashDel.addEventListener('click', () => {
+            delPlaylist1.classList.toggle('hideDel')
+        })
+
+        function openSearch() {
+            PlaylistSearchBar.style.opacity = '1';
+            PlaylistSearchBar.style.width = '200px';
+            PlaylistSearchIcon.style.opacity = '0';
+        }
+
+        function closeSearch() {
+            PlaylistSearchBar.style.opacity = '0';
+            PlaylistSearchBar.style.width = '0';
+            PlaylistSearchIcon.style.opacity = '1';
+        }
+
+        function showSearch() {
+            openSearch();
+            document.addEventListener('click', handleClickOutside);
+        }
+
+        function handleClickOutside(event) {
+            if (!PlaylistSearchContainer.contains(event.target)) {
+                closeSearch();
+                document.removeEventListener('click', handleClickOutside);
+            }
+        }
+
+        function showAddedComplete(message) {
+            delText.textContent = message;
+            AddText.classList.remove('hide-added');
+            localStorage.setItem('added-complete', message);
+            startCountdown();
+        }
+
+        function closeAddedComplete() {
+            AddText.classList.add('hide-added');
+            localStorage.removeItem('added-complete');
+            clearTimeout(countdownTimer);
+        }
+
+        let countdownTimer;
+        function startCountdown() {
+            countdownTimer = setTimeout(() => {
+                closeAddedComplete();
+            }, 5000); 
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const message = localStorage.getItem('added-complete');
+            if (message) {
+                showAddedComplete(message);
+            }
+        });
+
+        PlaylistSearchIcon.addEventListener('click', (event) => {
+            event.stopPropagation();
+            showSearch();
+        });
+
+        PlaylistSearchContainer.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+
+        OpenSort.addEventListener('click', () => {
+            SortContain.classList.toggle('show-sort');
+        });
+
+        closeAddText.addEventListener('click', closeAddedComplete);
+
+        confirmCreatePlaylist.addEventListener('click', () => {
+            showAddedComplete('New Playlist Added');
+        });
+
+
+    </script>
+</body>
+
+</html>

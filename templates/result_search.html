@@ -1,0 +1,312 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block title %}
+    69Music
+{% endblock %}
+
+{% if user.is_authenticated %}
+{% block  playList %}
+{% for playlist in playlists %}
+<a href="/detailplaylist/{{playlist.id}}">
+    <li class="playlist hover:bg-green-500">
+        <div class="img">
+            <img class="bg-stone-600" src="https://icon-library.com/images/icon-music-note/icon-music-note-0.jpg">
+        </div>
+        <div class="describe">{{playlist.name}}</div>
+    </li>
+</a>
+{% endfor %}
+{% endblock %}
+{% endif %}
+
+{% block content %}
+    <style>
+        .contain {
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+        }
+
+        .contain::-webkit-scrollbar {
+            width: 15px;
+        }
+        .contain::-webkit-scrollbar-track {
+            background-image: linear-gradient(#333, #222, #222, #222, #222, #222, #222);
+        }
+        .contain::-webkit-scrollbar-thumb {
+            background-color: #777;
+            border-radius: 3px;
+            visibility: hidden;
+        }
+        .contain::-webkit-scrollbar-thumb:hover {
+            background-color: #999;
+            border-radius: 3px;
+            visibility: visible;
+        }
+
+        .contain::-webkit-scrollbar-corner {
+            display: none;
+        }
+
+        .artist {
+            height: 100%;
+            margin: 0 0.3rem;
+            position: relative;
+            padding: 1rem;
+        }
+
+        .artist-info {
+            display: inline;
+            color: #fff;
+        }
+
+        .artist-info .artist-name{
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .artist-info .artist-describe{
+            font-size: 18px;
+        }
+
+        .artist:hover, .album:hover {
+            cursor: pointer;
+            background-image: linear-gradient(#222, #333);
+            border-radius: 1rem;
+        }
+
+        .play-button {
+            color: red;
+            background-color: #fff;
+            border-radius: 10rem;
+            font-size: 56px;
+            position: absolute;
+            right: 10%;
+            bottom: 10%;
+            transition: 0.1s;
+            opacity: 0;
+        }
+
+        .artist:hover .play-button {
+            bottom: 30%;
+            opacity: 1;
+        }
+
+        .artist-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            border-radius: 0.5rem;
+        }
+
+        @media screen and (min-width: 2000px) {
+            .popular-artist-contain-1, .popular-album-contain {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(5, 310px);
+                gap: 10px;
+            }
+            .artist-img {
+                height: 319px;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media screen and (min-width: 1800px) and (max-width: 1999px) {
+            .popular-artist-contain-1, .popular-album-contain {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(5, 278px);
+                gap: 10px;
+            }
+            .artist-img {
+                height: 280px;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media screen and (min-width: 1600px) and (max-width: 1799px) {
+            .popular-artist-contain-1, .popular-album-contain {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(5, 242px);
+                gap: 10px;
+            }
+            .artist-img {
+                height: 236px;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media screen and (min-width: 1400px) and (max-width: 1599px) {
+            .popular-artist-contain-1, .popular-album-contain {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(4, 257px);
+                gap: 10px;
+            }
+            .artist-img {
+                height: 255px;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media screen and (min-width: 1200px) and (max-width: 1399px) {
+            .popular-artist-contain-1, .popular-album-contain {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(4, 195px);
+                gap: 10px;
+            }
+            .artist-img {
+                height: 182px;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media screen and (min-width: 1000px) and (max-width: 1199px) {
+            .popular-artist-contain-1, .popular-album-contain {
+                position: relative;
+                display: grid;
+                grid-template-columns: repeat(3, 208px);
+                gap: 10px;
+            }
+            .artist-img {
+                height: 197px;
+                border-radius: 0.5rem;
+                overflow: hidden;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+
+
+    <div class="contain w-full h-full relative font-thaiFont">
+        <p class="artist-label-1 pt-8 font-bold text-white text-6xl ml-6 py-8">result</p>
+        <div class="popular-artist-contain-1 flex flex-row py-2">
+            {% for Art in arts%}
+            <div class='artist-list w-full h-full'>
+                <div class="artist">
+                    <div class="artist-img">
+                        <img src="{{Art.img}}">
+                    </div>
+                    <div class="artist-info">
+                        <a href="art/{{Art.id}}"><i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i></a>
+                        <p class="artist-name">{{Art.name}}</p>
+                        <p class="artist-describe">{{Art.name}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% for song in songs %}
+            <div class='artist-list'>
+                <div class="artist">
+                    <div class="artist-img">
+                        <img src="{{song.img}}">
+                    </div>
+                    <div class="artist-info">
+                        <a href="/songDetail/{{song.id}}"><i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i></a>
+                        <p class="artist-name">{{song.title}}</p>
+                        <p class="artist-describe">{{song.author.name}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% for album in albums%}
+            <div class='artist-list'>
+                <div class="artist">
+                    <div class="artist-img">
+                        <img src="{{album.cover_image}}">
+                    </div>
+                    <div class="artist-info">
+                        <a href="/songInAlbum/{{album.id}}">><i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i></a>
+                        <p class="artist-name">{{album.title}}</p>
+                        <p class="artist-describe">{{album.genre}}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <p class="artist-label-1 pt-8 font-bold text-white text-5xl ml-6 py-8">about result </p>
+        <div class="popular-artist-contain-1 flex flex-row">
+            {% for songall in song_all %}
+                {% if songabout.author.name == songall.author.name %}
+                    <!-- ตรวจสอบว่าเพลงนี้เคยแสดงใน result แล้วหรือไม่ -->
+                    {% if songall not in songs %}
+                    <div class='artist-list'>
+                        <div class="artist">
+                            <div class="artist-img">
+                                <img src="{{ songall.img }}">
+                            </div>
+                            <div class="artist-info">
+                                <a href="/songDetail/{{songall.id}}"><i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i></a>
+                                <p class="artist-name">{{ songall.title }}</p>
+                                <p class="artist-describe">{{ songall.author.name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            {% for songall in song_all %}
+                {% for Art in arts%}
+                    {% if Art.name == songall.author.name %}
+                        <!-- ตรวจสอบว่าเพลงนี้เคยแสดงใน result แล้วหรือไม่ -->
+                        {% if songall not in songs %}
+                        <div class='artist-list'>
+                            <div class="artist">
+                                <div class="artist-img">
+                                    <img src="{{ songall.img }}">
+                                </div>
+                                <div class="artist-info">
+                                    <a href="/songDetail/{{songall.id}}"><i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i></a>
+                                    <p class="artist-name">{{ songall.title }}</p>
+                                    <p class="artist-describe">{{ songall.author.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}        
+            {% endfor %}
+            {% for songall in song_all %}
+                {% for album in albums%}
+                    {% if album.title == songall.album.title %}
+                        <!-- ตรวจสอบว่าเพลงนี้เคยแสดงใน result แล้วหรือไม่ -->
+                        {% if songall not in songs %}
+                        <div class='artist-list'>
+                            <div class="artist">
+                                <div class="artist-img">
+                                    <img src="{{ songall.img }}">
+                                </div>
+                                <div class="artist-info">
+                                    <a href="/songDetail/{{songall.id}}"><i class="fa-sharp-duotone fa-solid fa-circle-play play-button"></i></a>
+                                    <p class="artist-name">{{ songall.title }}</p>
+                                    <p class="artist-describe">{{ songall.author.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}        
+            {% endfor %}            
+        </div>
+    </div>
+    
+
+
+
+
+{% endblock %}
